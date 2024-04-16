@@ -20,44 +20,110 @@ This draws the Four Corners fractal in a new turtle window. Once you've learned 
     >>> import fractalartmaker as fam
     >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100)
 
-This draws a fractal similar to the Horn demo fractal.
+This draws a fractal similar to the Horn demo fractal. The `fam.square` is a function that takes arguments `size` and `depth` and draws a square using `turtle` commands (each side should be `size` steps long, and `depth` is the current recursion level depth which is often ignored for simple fractals). The `100` is the initial size for the first square to draw. The `[{'size': 0.96, 'y': 0.5, 'angle': 11}]` is a list of *recursion-specification dictionaries*. This example says for each square drawn, recursively one more square is drawn at 96% the original size, located 50% of the size above the square after rotating it by 11 degrees.
+
+If you want each square to recursively draw two more squares, add a second dictionary to this list. Examine the `demo_*()` functions in the module (and in the following "Gallery of Demo Fractals" section) for examples. 
+
+NOTE: Calling `fam.draw_fractal()` automatically calls `turtle.reset()` to clear the window and move the turtle cursor back to 0, 0. If you don't want this behavior, pass `reset=False` to `fam.draw_fractal()`
 
 Gallery of Demo Fractals
 =================
 
-`fam.demo_four_corners()`
+    def demo_four_corners(size=350, max_depth=5, **kwargs):
+        # Four Corners:
+        if 'colors' not in kwargs:
+            kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+        draw_fractal(square, size,
+            [{'size': 0.5, 'x': -0.5, 'y': 0.5},
+             {'size': 0.5, 'x': 0.5, 'y': 0.5},
+             {'size': 0.5, 'x': -0.5, 'y': -0.5},
+             {'size': 0.5, 'x': 0.5, 'y': -0.5}], max_depth=max_depth, **kwargs)
 
 ![Screenshot of Four Corners fractal](four-corners.webp)
 
-`fam.demo_spiral_squares()`
+    def demo_spiral_squares(size=600, max_depth=50, **kwargs):
+        # Spiral Squares:
+        if 'colors' not in kwargs:
+            kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+        draw_fractal(square, size, [{'size': 0.95,
+            'angle': 7}], max_depth=max_depth, **kwargs)
 
 ![Screenshot of Spiral Squares fractal](spiral-squares.webp)
 
-`fam.demo_double_spiral_squares()`
+    def demo_double_spiral_squares(size=600, **kwargs):
+        # Double Spiral Squares:
+        if 'colors' not in kwargs:
+            kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+        draw_fractal(square, 600,
+            [{'size': 0.8, 'y': 0.1, 'angle': -10},
+             {'size': 0.8, 'y': -0.1, 'angle': 10}], **kwargs)
 
 ![Screenshot of Double Spiral Squares fractal](double-spiral-squares.webp)
 
-`fam.demo_triangle_spiral()`
+    def demo_triangle_spiral(size=20, max_depth=80, **kwargs):
+        # Triangle Spiral:
+        draw_fractal(triangle, size,
+            [{'size': 1.05, 'angle': 7}], max_depth=max_depth, **kwargs)
 
 ![Screenshot of Triangle Spiral fractal](triangle-spiral.webp)
 
-`fam.demo_glider()`
+    def demo_glider(size=600, **kwargs):
+        # Conway's Game of Life Glider:
+        if 'colors' not in kwargs:
+            kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+        third = 1 / 3
+        draw_fractal(square, 600,
+            [{'size': third, 'y': third},
+             {'size': third, 'x': third},
+             {'size': third, 'x': third, 'y': -third},
+             {'size': third, 'y': -third},
+             {'size': third, 'x': -third, 'y': -third}], **kwargs)
 
 ![Screenshot of Conway Glider fractal](glider.webp)
 
-`fam.demo_sierpinski_triangle()`
+    def demo_sierpinski_triangle(size=600, **kwargs):
+        # Sierpinski Triangle:
+        toMid = math.sqrt(3) / 6
+        draw_fractal(triangle, 600,
+            [{'size': 0.5, 'y': toMid, 'angle': 0},
+             {'size': 0.5, 'y': toMid, 'angle': 120},
+             {'size': 0.5, 'y': toMid, 'angle': 240}], **kwargs)
 
 ![Screenshot of Sierpinski Triangle fractal](sierpinski-triangle.webp)
 
-`fam.demo_wave()`
+    def demo_wave(size=280, **kwargs):
+        # Wave:
+        draw_fractal(triangle, size,
+            [{'size': 0.5, 'x': -0.5, 'y': 0.5},
+             {'size': 0.3, 'x': 0.5, 'y': 0.5},
+             {'size': 0.5, 'y': -0.7, 'angle': 15}], **kwargs)
 
 ![Screenshot of Wave fractal](wave.webp)
 
-`fam.demo_horn()`
+    def demo_horn(size=100, max_depth=100, **kwargs):
+        # Horn:
+        if 'colors' not in kwargs:
+            kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+        draw_fractal(square, size,
+            [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=max_depth, **kwargs)
 
 ![Screenshot of Horn fractal](horn.webp)
 
-`fam.demo_snowflake()`
+    def demo_snowflake(size=200, **kwargs):
+        # Snowflake:
+        if 'colors' not in kwargs:
+            kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+        draw_fractal(square, size,
+            [{'x': math.cos(0 * math.pi / 180),
+              'y': math.sin(0 * math.pi / 180), 'size': 0.4},
+             {'x': math.cos(72 * math.pi / 180),
+              'y': math.sin(72 * math.pi / 180), 'size': 0.4},
+             {'x': math.cos(144 * math.pi / 180),
+              'y': math.sin(144 * math.pi / 180), 'size': 0.4},
+             {'x': math.cos(216 * math.pi / 180),
+              'y': math.sin(216 * math.pi / 180), 'size': 0.4},
+             {'x': math.cos(288 * math.pi / 180),
+              'y': math.sin(288 * math.pi / 180), 'size': 0.4}], **kwargs)
 
 ![Screenshot of Snowflake fractal](snowflake.webp)
 
@@ -194,7 +260,31 @@ All shape-drawing functions are passed a `size` argument and a `depth` argument.
             turtle.right(90)
         turtle.end_fill()
 
-You can write your shape-drawing functions however you want. TODO: This section is incomplete.
+TODO: The rest of this section is incomplete. I'm going to quickly write down code examples and basic descriptions without much editing because I just need to get this tutorial done:
+
+The `fam.square` and `fam.triangle` shape-drawing functions that come with Fractal Art Maker have special features that you pass as keyword arguments to `fam.draw_fractal()`. (These ONLY apply to these two functions. You can write your shape-drawing functions however you want with whatever features you want. Keyword arguments to `fam.draw_fractal()` are forwarded to your shape-drawing function. Your shape-drawing function should have the parameters `size, depth, \*\*kwargsFor` and these extra arguments will be in the `kwargs` dictionary. ["Kwargs" is a Python convention.](https://realpython.com/python-kwargs-and-args/))
+
+For example, here's the Horn example with some of these features:
+
+Blue pen color and red fill color:
+
+    >>> import fractalartmaker as fam
+    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, pen='blue', fill='red')
+
+Blue pen and red fill color for the first iteration, then green pen and yellow fill for the second iteration, and then it cycles back to the first set of colors:
+
+    >>> import fractalartmaker as fam
+    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, colors=[['blue', '#FF0000'], ['green', 'yellow']])
+
+Pen size of 10:
+
+    >>> import fractalartmaker as fam
+    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, pensize=10)
+
+Random jiggle that moves the position by 25% of the size:
+
+    >>> import fractalartmaker as fam
+    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, jiggle=0.25)
 
 
 Python Turtle Module Cheat Sheet

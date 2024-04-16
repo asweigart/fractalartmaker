@@ -11,10 +11,15 @@ def std_fam_args(func):
         size = args[0]
         depth = args[1]
 
-        # kwargs include pen, fill, colors, skip, jiggle, int
+        # kwargs include pen, fill, colors, skip, jiggle, int, pensize
         
         if 'skip' in kwargs and random.random() < kwargs['skip']:
             return
+
+        # Set pen size, if specified:
+        if 'pensize' in kwargs:
+            original_pen_size = turtle.pensize()
+            turtle.pensize(kwargs['pensize'])
 
         # Set the pen and fill color, if specified
         if 'colors' in kwargs:
@@ -60,6 +65,8 @@ def std_fam_args(func):
             turtle.pencolor(original_pen)
         if 'fill' in kwargs:
             turtle.fillcolor(original_fill)
+        if 'pensize' in kwargs:
+            turtle.pensize(original_pen_size)
 
         return return_value
     return wrapper_decorator
@@ -101,9 +108,12 @@ def triangle(size, depth, **kwargs):
         turtle.right(120)
 
 
-def draw_fractal(shape_drawing_function, size, specs, max_depth=8, _depth=0, **kwargs):
+def draw_fractal(shape_drawing_function, size, specs, max_depth=8, _depth=0, reset=True, **kwargs):
     if _depth > max_depth or size < 1:
         return  # BASE CASE
+
+    if _depth == 0 and reset:
+        turtle.reset()
 
     # Save the position and heading at the start of this function call:
     initialX = turtle.xcor()
