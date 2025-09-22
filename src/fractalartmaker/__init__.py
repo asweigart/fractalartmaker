@@ -1,79 +1,15 @@
-import turtle, math, random, functools
+import turtle, math, random, functools, copy
+from turtle import forward, backward, left, right, position, heading, goto, setx, sety, towards, setheading, penup, pendown, pensize, width, pencolor, fillcolor, begin_fill, end_fill, home, clear, reset, hideturtle, showturtle, bgcolor, tracer, exitonclick, done, fd, bk, lt, rt, pos, pd, pu, update
+
+__version__ = '0.3.0'
+__all__ = ['draw_fractal', 'square', 'triangle', 'demo_four_corners', 'demo_spiral_squares', 'demo_double_spiral_squares', 'demo_triangle_spiral', 'demo_glider', 'demo_sierpinski_triangle', 'demo_wave', 'demo_horn', 'demo_snowflake', 'forward', 'backward', 'left', 'right', 'position', 'heading', 'goto', 'setx', 'sety', 'towards', 'setheading', 'penup', 'pendown', 'pensize', 'width', 'pencolor', 'fillcolor', 'begin_fill', 'end_fill', 'home', 'clear', 'reset', 'hideturtle', 'showturtle', 'bgcolor', 'tracer', 'exitonclick', 'done', 'fd', 'bk', 'lt', 'rt', 'pos', 'pd', 'pu', 'update']
 
 turtle.tracer(50000, 0) # Increase the first argument to speed up the drawing.
 turtle.hideturtle()
 
 
-def std_fam_args(func):
-    """A decorator that adds the standard fractalartmaker arguments to drawing functions: pen, fill, colors, skip, jiggle, int"""
-    @functools.wraps(func)
-    def wrapper_decorator(*args, **kwargs):
-        size = args[0]
-        depth = args[1]
 
-        # kwargs include pen, fill, colors, skip, jiggle, int, pensize
-        
-        if 'skip' in kwargs and random.random() < kwargs['skip']:
-            return
-
-        # Set pen size, if specified:
-        if 'pensize' in kwargs:
-            original_pen_size = turtle.pensize()
-            turtle.pensize(kwargs['pensize'])
-
-        # Set the pen and fill color, if specified
-        if 'colors' in kwargs:
-            original_pen = turtle.pencolor()
-            original_fill = turtle.fillcolor()
-            i = depth % len(kwargs['colors'])
-            turtle.pencolor(kwargs['colors'][i][0])
-            turtle.fillcolor(kwargs['colors'][i][1])
-        else:
-            if 'pen' in kwargs:
-                original_pen = turtle.pencolor()
-                turtle.pencolor(kwargs['pen'])
-            if 'fill' in kwargs:
-                original_fill = turtle.fillcolor()
-                turtle.fillcolor(kwargs['fill'])
-
-        if 'jiggle' in kwargs:
-            turtle.penup()
-            turtle.forward(random.random() * (size * kwargs['jiggle'] * 2) - (size * kwargs['jiggle']))
-            turtle.left(90)
-            turtle.forward(random.random() * (size * kwargs['jiggle'] * 2) - (size * kwargs['jiggle']))
-            turtle.right(90)
-            origx, origy = turtle.pos()
-            turtle.pendown()
-
-        if 'int' in kwargs and kwargs['int']:
-            args[0] = int(args[0])  # Make `size` an int instead of a float.
-
-        # Call the drawing function:
-        return_value = func(*args, **kwargs)
-
-        if 'jiggle' in kwargs:
-            # go back to original point
-            turtle.penup()
-            turtle.goto(origx, origy)
-            turtle.pendown()
-        
-        # Restore the original pen and fill color, if specified
-        if 'colors' in kwargs:
-            turtle.pencolor(original_pen)
-            turtle.fillcolor(original_fill)
-        if 'pen' in kwargs:
-            turtle.pencolor(original_pen)
-        if 'fill' in kwargs:
-            turtle.fillcolor(original_fill)
-        if 'pensize' in kwargs:
-            turtle.pensize(original_pen_size)
-
-        return return_value
-    return wrapper_decorator
-
-
-@std_fam_args
-def square(size, depth, **kwargs):
+def square(size, **kwargs):
     # Move to the top-right corner before drawing:
     turtle.penup()
     turtle.forward(size // 2)
@@ -92,8 +28,7 @@ def square(size, depth, **kwargs):
         turtle.end_fill()
 
 
-@std_fam_args
-def triangle(size, depth, **kwargs):
+def triangle(size, **kwargs):
     # Move the turtle to the top of the equilateral triangle:
     height = size * math.sqrt(3) / 2
     turtle.penup()
@@ -109,11 +44,16 @@ def triangle(size, depth, **kwargs):
 
 
 def draw_fractal(shape_drawing_function, size, specs, max_depth=8, _depth=0, reset=True, **kwargs):
+    # BASE CASE
     if _depth > max_depth or size < 1:
-        return  # BASE CASE
+        return  
 
     if _depth == 0 and reset:
         turtle.reset()
+
+    # Mirror _depth in the kwargs dictionary. This is so it's available to
+    # the drawing functions, but we need to update it at each recursive depth level.
+    kwargs['depth'] = _depth
 
     # Save the position and heading at the start of this function call:
     initialX = turtle.xcor()
@@ -122,7 +62,10 @@ def draw_fractal(shape_drawing_function, size, specs, max_depth=8, _depth=0, res
 
     # Call the draw function to draw the shape:
     turtle.pendown()
-    shape_drawing_function(size, _depth, **kwargs)
+    for kwarg in list(kwargs.keys()):
+        if kwarg not in shape_drawing_function.__code__.co_varnames:
+            del kwargs[kwarg]
+    shape_drawing_function(size, **kwargs)
     turtle.penup()
 
     # RECURSIVE CASE
@@ -146,47 +89,14 @@ def draw_fractal(shape_drawing_function, size, specs, max_depth=8, _depth=0, res
         turtle.right(90)
 
         # Make the recursive call:
-        draw_fractal(shape_drawing_function, size * sizeCh, specs, max_depth,
-        _depth + 1, **kwargs)
-
-def draw_random(shape_drawing_function=None, size=None, max_depth=None, seed=None, **kwargs):
-    """TODO: Currently this doesn't draw anything interesting and needs more tweaking."""
-    if shape_drawing_function is None:
-        shape_drawing_function = random.choice((square, triangle))
-    if size is None:
-        size = random.random() * 50 + 50
-    if max_depth is None:
-        max_depth = random.randint(3, 6)
-    if seed is not None:
-        random.seed = seed
-
-    specs = []
-
-    for i in range(random.randint(1, 5)):
-        specs.append({'size': random.random() * 1 + 0.5,
-                      'x': random.random() * 1 + 0.5,
-                      'y': random.random() * 1 + 0.5,
-                      'angle': random.random() * 360})
-
-    draw_fractal(shape_drawing_function, size, specs, max_depth)
-
-    return specs
-
-def reset():
-    turtle.reset()
-
-def hideturtle():
-    turtle.hideturtle()
-
-def showturtle():
-    turtle.showturtle()
+        draw_fractal(shape_drawing_function, size * sizeCh, specs, max_depth, _depth + 1,
+            **kwargs)
 
 
 
 def demo_four_corners(size=350, max_depth=5, **kwargs):
     # Four Corners:
-    if 'colors' not in kwargs:
-        kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+    kwargs.setdefault('colors', (('black', 'white'), ('black', 'gray')))
     draw_fractal(square, size,
         [{'size': 0.5, 'x': -0.5, 'y': 0.5},
          {'size': 0.5, 'x': 0.5, 'y': 0.5},
@@ -196,16 +106,14 @@ def demo_four_corners(size=350, max_depth=5, **kwargs):
 
 def demo_spiral_squares(size=600, max_depth=50, **kwargs):
     # Spiral Squares:
-    if 'colors' not in kwargs:
-        kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+    kwargs.setdefault('colors', (('black', 'white'), ('black', 'gray')))
     draw_fractal(square, size, [{'size': 0.95,
         'angle': 7}], max_depth=max_depth, **kwargs)
 
 
 def demo_double_spiral_squares(size=600, **kwargs):
     # Double Spiral Squares:
-    if 'colors' not in kwargs:
-        kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+    kwargs.setdefault('colors', (('black', 'white'), ('black', 'gray')))
     draw_fractal(square, 600,
         [{'size': 0.8, 'y': 0.1, 'angle': -10},
          {'size': 0.8, 'y': -0.1, 'angle': 10}], **kwargs)
@@ -219,24 +127,21 @@ def demo_triangle_spiral(size=20, max_depth=80, **kwargs):
 
 def demo_glider(size=600, **kwargs):
     # Conway's Game of Life Glider:
-    if 'colors' not in kwargs:
-        kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
-    third = 1 / 3
+    kwargs.setdefault('colors', (('black', 'white'), ('black', 'gray')))
     draw_fractal(square, 600,
-        [{'size': third, 'y': third},
-         {'size': third, 'x': third},
-         {'size': third, 'x': third, 'y': -third},
-         {'size': third, 'y': -third},
-         {'size': third, 'x': -third, 'y': -third}], **kwargs)
+        [{'size': 1 / 3, 'y': 1 / 3},
+         {'size': 1 / 3, 'x': 1 / 3},
+         {'size': 1 / 3, 'x': 1 / 3, 'y': -1 / 3},
+         {'size': 1 / 3, 'y': -1 / 3},
+         {'size': 1 / 3, 'x': -1 / 3, 'y': -1 / 3}], **kwargs)
 
 
 def demo_sierpinski_triangle(size=600, **kwargs):
     # Sierpinski Triangle:
-    toMid = math.sqrt(3) / 6
     draw_fractal(triangle, 600,
-        [{'size': 0.5, 'y': toMid, 'angle': 0},
-         {'size': 0.5, 'y': toMid, 'angle': 120},
-         {'size': 0.5, 'y': toMid, 'angle': 240}], **kwargs)
+        [{'size': 0.5, 'y': math.sqrt(3) / 6, 'angle': 0},
+         {'size': 0.5, 'y': math.sqrt(3) / 6, 'angle': 120},
+         {'size': 0.5, 'y': math.sqrt(3) / 6, 'angle': 240}], **kwargs)
 
 
 def demo_wave(size=280, **kwargs):
@@ -249,16 +154,14 @@ def demo_wave(size=280, **kwargs):
 
 def demo_horn(size=100, max_depth=100, **kwargs):
     # Horn:
-    if 'colors' not in kwargs:
-        kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+    kwargs.setdefault('colors', (('black', 'white'), ('black', 'gray')))
     draw_fractal(square, size,
         [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=max_depth, **kwargs)
 
 
 def demo_snowflake(size=200, **kwargs):
     # Snowflake:
-    if 'colors' not in kwargs:
-        kwargs['colors'] = (('black', 'white'), ('black', 'gray'))
+    kwargs.setdefault('colors', (('black', 'white'), ('black', 'gray')))
     draw_fractal(square, size,
         [{'x': math.cos(0 * math.pi / 180),
           'y': math.sin(0 * math.pi / 180), 'size': 0.4},
@@ -270,5 +173,3 @@ def demo_snowflake(size=200, **kwargs):
           'y': math.sin(216 * math.pi / 180), 'size': 0.4},
          {'x': math.cos(288 * math.pi / 180),
           'y': math.sin(288 * math.pi / 180), 'size': 0.4}], **kwargs)
-
-

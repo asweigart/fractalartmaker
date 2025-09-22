@@ -1,12 +1,12 @@
 # fractalartmaker
 A module for creating fractal art in Python's turtle module.
 
-Fractals are recursive, self-similar shapes. The `fractalartmaker` module (abbreviated as `fam`) helps you create fractals in the Python programming language using Python's built-in `turtle` module. This module is based on the "Fractal Art Maker" chapter of the free book, [The Recursive Guide to Recursion](https://inventwithpython.com/recursion/) by Al Sweigart. Additional changes have been made to make it easier to use and experiment with.
+Fractals are recursive, self-similar shapes. The `fractalartmaker` module (abbreviated as `fam`) lets you create fractals in Python's built-in `turtle` module. This module is based on the "Fractal Art Maker" chapter of my free book, [The Recursive Guide to Recursion](https://inventwithpython.com/recursion/).
 
 Quickstart
 ===========
 
-Run `pip install fractalartmaker` to install. Run `python -m fractalartmaker` on Windows or `python3 -m fractalartmaker` on macOS to run the demo and view nine pieces of fractal art made by Al Sweigart.
+To install, run `pip install fractalartmaker` in the command line terminal. Run `python -m fractalartmaker` on Windows or `python3 -m fractalartmaker` on macOS to run the demo and view nine pieces of fractal art made by Al Sweigart.
 
 First, you must know a little bit of Python programming and Python's `turtle` module. [RealPython.com has a `turtle` module tutorial.](https://realpython.com/beginners-guide-python-turtle/)
 
@@ -15,16 +15,71 @@ You can view a demo fractal by running the following code from the interactive s
     >>> import fractalartmaker as fam
     >>> fam.demo_four_corners()
 
-This draws the Four Corners fractal in a new turtle window. Once you've learned how Fractal Art Maker works, you can call the `fam.draw_fractal()` function yourself:
+This draws the Four Corners fractal in a new turtle window.
 
-    >>> import fractalartmaker as fam
-    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100)
+The main function we'll use in the `fam` module is `fam.draw_fractal()`. We'll need to pass it a *drawing function*, which is a function that takes a `size` argument and draws a simple shape. Here's the code for `square()` function that draws a square:
 
-This draws a fractal similar to the Horn demo fractal. The `fam.square` is a function that takes arguments `size` and `depth` and draws a square using `turtle` commands (each side should be `size` steps long, and `depth` is the current recursion level depth which is often ignored for simple fractals). The `100` is the initial size for the first square to draw. The `[{'size': 0.96, 'y': 0.5, 'angle': 11}]` is a list of *recursion-specification dictionaries*. This example says for each square drawn, recursively one more square is drawn at 96% the original size, located 50% of the size above the square after rotating it by 11 degrees.
+    def my_square_drawing_function(size):
+        # Move to the top-right corner before drawing:
+        turtle.penup()
+        turtle.forward(size // 2)
+        turtle.left(90)
+        turtle.forward(size // 2)
+        turtle.left(180)
+        turtle.pendown()
 
-If you want each square to recursively draw two more squares, add a second dictionary to this list. Examine the `demo_*()` functions in the module (and in the following "Gallery of Demo Fractals" section) for examples. 
+        # Draw a square with sides of length `size`:
+        for i in range(4):  # Draw four lines.
+            turtle.forward(size)
+            turtle.right(90)
+
+On its own, this function will just draw a square of a given size. (Note that this function isn't recursive; it just draws one square.) But the `fam.draw_fractal()` function can use functions like this to create fractals.
+
+To make a fractal, call `fam.draw_fractal()` and pass it this drawing function, a starting size (let's go with `100`), and a list of *recursion specification dictionaries*. By recursion specification dictionary, I mean a list of dictionaries with (optional) keys `'size'`, `'x'`, `'y'`, and `'angle'`. I'll explain what these keys do later, but try calling this:
+
+    fam.draw_fractal(my_square_drawing_function, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}])
+
+![Screenshot of fractal](my_square1.webp)
+
+This draws a fractal similar to the `fam.demo_horn()` fractal. The `100` is the initial size for the first square to draw. The list of recursion specification dictionaries `[{'size': 0.96, 'y': 0.5, 'angle': 11}]` has one dictionary in it. This means for each shape drawn with the drawing function, we will draw one more recursive shape. The new square is drawn at 96% the original size (because the `'size'` key is `0.96`), located 50% of the size above the square (because the `'y'` key is `0.5`), after rotating it counterclockwise by 11 degrees (because the `'angle'` is set to `11`).
+
+By default, `fam.draw_fractal()` only goes 8 recursive levels deep. You can change this by passing a `max_depth` argument.
+
+    fam.draw_fractal(my_square_drawing_function, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=50)
+
+![Screenshot of fractal](my_square2.webp)
+
+Let's make each square draw *two* squares by putting a *second* recursion specification dictionary in the list. Because each square will draw two squares (and both of those two squares will draw two squares each, and so on and so on), be sure to set `max_depth` to something small like it's default `8`. Otherwise, the exponentially large amount of drawing will slow your program down to a crawl.
+
+Let's make the second recursion specification dictionary the same as the first, but it's `'angle'` key is `-11` instead of `11`. This will make it veer off clockwise by 11 degrees instead of the normal counterclockwise:
+
+    fam.draw_fractal(my_square_drawing_function, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}, {'size': 0.96, 'y': 0.5, 'angle': -11}], max_depth=8)
+
+![Screenshot of fractal](my_square3.webp)
+
+As you can see, it doesn't take much to fill up the window with too many shapes. The key to making aesthetically pleasing fractals is to take a light touch and spend a lot of time experimenting. For example, we could pass a list of three recursion specification dictionaries to draw squares in three of the corners of the parent square:
+
+    fam.draw_fractal(my_square_drawing_function, 350,
+        [{'size': 0.5, 'x': -0.5, 'y': 0.5},
+         {'size': 0.5, 'x': 0.5, 'y': 0.5},
+         {'size': 0.5, 'x': -0.5, 'y': -0.5}], max_depth=4)
+
+![Screenshot of fractal](my_square4.webp)
+
+If we increase the max depth to `10`, we can see a new pattern emerge:
+
+    fam.draw_fractal(my_square_drawing_function, 350,
+        [{'size': 0.5, 'x': -0.5, 'y': 0.5},
+         {'size': 0.5, 'x': 0.5, 'y': 0.5},
+         {'size': 0.5, 'x': -0.5, 'y': -0.5}], max_depth=10)
+
+![Screenshot of fractal](my_square5.webp)
+
+The `fractalartmaker` module comes with a `fam.square` and `fam.triangle` drawing functions that you can play with. Also take a look at the code for the demo functions inside the *\_\_init\_\_.py* file for more ideas. Check out the rest of this documentation for advanced tips. Good luck!
 
 NOTE: Calling `fam.draw_fractal()` automatically calls `turtle.reset()` to clear the window and move the turtle cursor back to 0, 0. If you don't want this behavior, pass `reset=False` to `fam.draw_fractal()`
+
+NOTE: To free you from having to import the `turtle` module yourself, you can call most `turtle` functions from the `fam` module: `fam.reset()`, `fam.update()`, and so on.
 
 Gallery of Demo Fractals
 =================
@@ -128,115 +183,10 @@ Gallery of Demo Fractals
 ![Screenshot of Snowflake fractal](snowflake.webp)
 
 
-Creating Your Own Fractals
-=======================
-
-Creating a fractal with Fractal Art Maker involves two parts.
-
-First, you need to write what I call a *shape-drawing function*. This is a function that uses `turtle` functions to draw a simple shape that will be redrawn dozens or hundreds of times for your fractal. The function must take at least two parameters: the first is named `size` and the second is named `depth`.
-
-For example, this shape-drawing function that draws a square (the `depth` argument is ignored):
-
-    def square(size, depth):
-        # Move to the top-right corner before drawing:
-        turtle.penup()
-        turtle.forward(size // 2)
-        turtle.left(90)
-        turtle.forward(size // 2)
-        turtle.left(180)
-        turtle.pendown()
-
-        # Draw a square:
-        for i in range(4):  # Draw four lines.
-            turtle.forward(size)
-            turtle.right(90)
-
-The `fam` library calls your shape-drawing function and provides it with the appropriate `size` argument. The size of your shape just has to be relative to whatever number is passed for this 
-
-Your shape-drawing function must draw a shape relative to the size of `size` and whatever direction it is currently facing. Use relative `turtle` functions like `forward()`, `back()`, `left()`, and `right()` rather than absolute functions like `goto()` or `setheading()`. The argument you pass to `forward()` and `back()` calls should always depend on the `size` argument rather than be a static, fixed number.
-
-The `depth` argument is the level of recursion that the shape has been drawn at. So for the first level it is `0`, the second level it is `1`, and so on. You could use to do some more advanced effects (discussed later).
-
-Your shape-drawing function does not call itself or do any recursion. Keep it simple: It just draws a shape using the `turtle` functions.
-
-The `fam` library has some shape-drawing functions for you to use: `fam.square()` and `fam.triangle()`
-
-Second, you must call the `fam.draw_fractal()` function and pass three things: a shape-drawing function, the starting size (`100` is often good), and a list of *recursion-specification dictionaries*. Each dictionary in this list specifies how the shape changes at each level of recursion: `'size'` for size changes, `'x'` for left/right movement, `'y'` for up/down movement, and `'angle'` for rotation.
-
-Note that for Fractal Art Maker's recursion-specification dictionaries, a positive `'y'` goes up and a negative `'y'` goes down. (It's like graphs in school math class, rather than computer graphics.)
-
-For example, let's take a look at the Horn demo fractal that comes with Fractal Art Maker. You can see it by running `import fractalartmaker as fam; fam.demo_horn()`:
-
-![Screenshot of Horn fractal](horn.webp)
-
-This fractal is made by drawing a square, then recursively drawing a second square that is:
-
-* Slightly smaller. (96% of the previous square's size, to be exact.)
-* Placed above. (A distance that is 50% of the previous square's size, to be exact.)
-* Rotated clockwise a little. (11 degrees, to be exact.)
-
-This second square (which is gray, as this fractal alternates between white and gray squares) in turn recursively produces *a third square that is slightly smaller, placed above, and rotated clockwise a little.* Note that since the second was rotated left/clockwise, it's "up" is actually rotated as well. This is why the subsequent squares tilt to the left.
-
-We can draw this with the following recursion-specifiction dictionary: `{'size': 0.96, 'y': 0.5, 'angle': 11}`
-
-So to draw the Horn fractal in Fractal Art Maker, we run the following code:
-
-    >>> import fractalartmaker as fam
-    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100)
-
-The `max_depth` keyword argument is how many levels of recursion you want to make. By default it is set to `8`.
-
-If we pass an `'x'` or `'y'` argument of `0.0`, the next recursive shape is not moved at all from the parent shape's position. If we pass a `'size'` of `1.0`, the next recursive shape is the same size as the parent shape's size. If we pass an `'angle'` of `0`, the next recursive shape is not rotated. These are also the default values if you leave out the key from the dictionary altogether.
-
-While `'angle'` is always an absolute number of degrees to rotate, the `'x'`, `'y'`, and `'size'` values are always relative to the current size of the shape-drawing function's shape.
-
-Let's do another example similar to the Four Squares demo. Run `fam.reset()` to clear the turtle window and put the turtle cursor back at 0, 0. (This function is the same as `turtle.reset()`.) I want to draw square and then the recursive step to draw smaller square to the up and left of the previous square (and no rotation). Run the following code:
-
-    >>> import fractalartmaker as fam
-    >>> fam.draw_fractal(fam.square, 350, [{'size': 0.5, 'x': -0.5, 'y': 0.5}], max_depth=5)
-
-This code draws the following:
-
-![Screenshot of Four Corners with only one corner drawn.](readme-one-corners.webp)
-
-The `max_depth=5` keyword argument prevents too many squares from being drawn. (The default maximum recursive depth is 8.)
-
-We can add a second recursive square to all of these squares by adding a second recursion-specification dictionary to the list. This second dictionary will draw another recursive step *up and to the right*. Continue the interactive shell example with the following code. Notice how the second dictionary has an `'x'` of `0.5` instead of `-0.5`:
-
-    >>> fam.reset()  # Clears the screen.
-    >>> fam.draw_fractal(fam.square, 350, [{'size': 0.5, 'x': -0.5, 'y': 0.5}, {'size': 0.5, 'x': 0.5, 'y': 0.5}], max_depth=5)
-
-This code draws the following:
-
-![Screenshot of Four Corners with only two corners drawn.](readme-two-corners.webp)
-
-Keep in mind that it isn't just the first square that gets two recursive squares, but *every* square that gets two recursive squares.
-
-And we can add a third square by adding a third specification dictionary to the list, this one with a `'y'` of `-0.5`:
-
-    >>> fam.reset()  # Clears the screen.
-    >>> fam.draw_fractal(fam.square, 350, [{'size': 0.5, 'x': -0.5, 'y': 0.5}, {'size': 0.5, 'x': 0.5, 'y': 0.5}, {'size': 0.5, 'x': -0.5, 'y': -0.5}], max_depth=5)
-
-This code draws the following:
-
-![Screenshot of Four Corners with only three corners drawn.](readme-three-corners.webp)
-
-Finally, we can add a fourth square:
-
-    >>> fam.reset()  # Clears the screen.
-    >>> fam.draw_fractal(fam.square, 350, [{'size': 0.5, 'x': -0.5, 'y': 0.5}, {'size': 0.5, 'x': 0.5, 'y': 0.5}, {'size': 0.5, 'x': -0.5, 'y': -0.5}, {'size': 0.5, 'x': 0.5, 'y': -0.5}], max_depth=5)
-
-This code draws the following:
-
-![Screenshot of Four Corners with all four corners drawn.](readme-four-corners.webp)
-
-You'll notice that this fractal isn't quite the same as the `fam.demo_four_corners()` one. We can alternate between white and gray fill colors for the square in the shape-drawing function. Let's take a look at that next.
-
-
 Advanced Features of FAM's Shape-Drawing Functions
 ==========================
 
-All shape-drawing functions are passed a `size` argument and a `depth` argument. We can make the white-and-gray alternating colors by examining the `depth` argument. In the following shape-drawing function, the fill color for the square is set to white or gray depending on the recursive depth:
+All shape-drawing functions are passed a `size` argument. We can make the white-and-gray alternating colors by adding the optional `depth` parameter to our drawing function. The `draw_fractal()` function will pass the recursion depth (`1` for the first depth level, `2` for the next, and so on) to the drawing function. In the following `square_alternating_white_gray()` drawing function, the fill color for the square is set to white or gray depending on the `depth` argument:
 
     def square_alternating_white_gray(size, depth):
         # Move to the top-right corner before drawing:
@@ -247,7 +197,7 @@ All shape-drawing functions are passed a `size` argument and a `depth` argument.
         turtle.left(180)
         turtle.pendown()
 
-        # Set fill color:
+        # Set fill color based on recursion depth level:
         if depth % 2 == 0:
             turtle.fillcolor('white')
         else:
@@ -260,31 +210,41 @@ All shape-drawing functions are passed a `size` argument and a `depth` argument.
             turtle.right(90)
         turtle.end_fill()
 
-TODO: The rest of this section is incomplete. I'm going to quickly write down code examples and basic descriptions without much editing because I just need to get this tutorial done:
+    draw_fractal(square_alternating_white_gray, 300, 
+        [{'size': 0.5, 'x': -0.5, 'y': 0.5},
+        {'size': 0.5, 'x': 0.5, 'y': 0.5},], max_depth=5)
 
-The `fam.square` and `fam.triangle` shape-drawing functions that come with Fractal Art Maker have special features that you pass as keyword arguments to `fam.draw_fractal()`. (These ONLY apply to these two functions. You can write your shape-drawing functions however you want with whatever features you want. Keyword arguments to `fam.draw_fractal()` are forwarded to your shape-drawing function. Your shape-drawing function should have the parameters `size, depth, \*\*kwargsFor` and these extra arguments will be in the `kwargs` dictionary. ["Kwargs" is a Python convention.](https://realpython.com/python-kwargs-and-args/))
+![Screenshot of fractal](alternating-white-gray-squares.webp)
 
-For example, here's the Horn example with some of these features:
+You can also pass any custom keyword argument to `draw_fractal()`, and it will be forwarded to the drawing function. For example, I set up `square_random_fill()` draw function with a `custom_fill_colors` parameter. If you pass `custom_fill_colors=['blue', 'red', 'yellow', 'black', 'white']` to `draw_fractal()`, this list will be forwarded to the draw function. Note that if you pass a custom argument like `custom_fill_colors` to `draw_fractal()`, the drawing function must have a parameter named `custom_fill_colors`.
+    
+    import random
 
-Blue pen color and red fill color:
+    def square_random_fill(size, custom_fill_colors):
+        # Move to the top-right corner before drawing:
+        turtle.penup()
+        turtle.forward(size // 2)
+        turtle.left(90)
+        turtle.forward(size // 2)
+        turtle.left(180)
+        turtle.pendown()
 
-    >>> import fractalartmaker as fam
-    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, pen='blue', fill='red')
+        # Set fill color randomly:
+        turtle.fillcolor(random.choice(custom_fill_colors))
+        
+        # Draw a square:
+        turtle.begin_fill()
+        for i in range(4):  # Draw four lines.
+            turtle.forward(size)
+            turtle.right(90)
+        turtle.end_fill()
 
-Blue pen and red fill color for the first iteration, then green pen and yellow fill for the second iteration, and then it cycles back to the first set of colors:
+    draw_fractal(square_random_fill, 300, 
+        [{'size': 0.5, 'x': -0.5, 'y': 0.5},
+        {'size': 0.5, 'x': 0.5, 'y': 0.5},], max_depth=5, custom_fill_colors=['blue', 'red', 'yellow', 'black', 'white'])
 
-    >>> import fractalartmaker as fam
-    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, colors=[['blue', '#FF0000'], ['green', 'yellow']])
+![Screenshot of fractal](random-fill-squares.webp)
 
-Pen size of 10:
-
-    >>> import fractalartmaker as fam
-    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, pensize=10)
-
-Random jiggle that moves the position by 25% of the size:
-
-    >>> import fractalartmaker as fam
-    >>> fam.draw_fractal(fam.square, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=100, jiggle=0.25)
 
 
 Python Turtle Module Cheat Sheet
@@ -330,17 +290,13 @@ Python Turtle Module Cheat Sheet
 
     turtle.exitonclick()  # Close the window when the user clicks it.
 
+    turtle.fd()  # Same as forward()
+    turtle.bk()  # Same as backward()
+    turtle.lt()  # Same as left()
+    turtle.rt()  # Same as right()
 
-Short Function Names Cheat Sheet
-================
+    turtle.pos()  # Same as position()
 
-    turtle.fd()  # forward()
-    turtle.bk()  # backward()
-    turtle.lt()  # left()
-    turtle.rt()  # right()
-
-    turtle.pos()  # position()
-
-    turtle.pd()  # pendown()
-    turtle.pu()  # penup()
+    turtle.pd()  # Same as pendown()
+    turtle.pu()  # Same as penup()
 
