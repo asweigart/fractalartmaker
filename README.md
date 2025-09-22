@@ -15,9 +15,11 @@ You can view a demo fractal by running the following code from the interactive s
     >>> import fractalartmaker as fam
     >>> fam.demo_four_corners()
 
+NOTE: It's much easier to type if you import the `fractalartmaker` module with the name `fam`. We will do so throughout this tutorial.
+
 This draws the Four Corners fractal in a new turtle window.
 
-The main function we'll use in the `fam` module is `fam.draw_fractal()`. We'll need to pass it a *drawing function*, which is a function that takes a `size` argument and draws a simple shape. Here's the code for `square()` function that draws a square:
+The main function we'll use in the `fam` module is `fam.draw_fractal()`. We'll need to pass it a *drawing function*, which is a function that takes a `size` argument and draws a simple shape. Here's the code for `my_square_drawing_function()` function that draws a square:
 
     def my_square_drawing_function(size):
         # Move to the top-right corner before drawing:
@@ -70,7 +72,7 @@ As you can see, it doesn't take much to fill up the window with too many shapes.
 
 <img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/my_square4.webp" style="max-width: 50%">
 
-If we increase the max depth to `10`, we can see a new pattern emerge:
+If we increase the `max_depth` to `10`, we can see a new pattern emerge:
 
     fam.draw_fractal(my_square_drawing_function, 350,
         [{'size': 0.5, 'x': -0.5, 'y': 0.5},
@@ -79,11 +81,12 @@ If we increase the max depth to `10`, we can see a new pattern emerge:
 
 <img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/my_square5.webp" style="max-width: 50%">
 
-The `fractalartmaker` module comes with a `fam.square` and `fam.triangle` drawing functions that you can play with. Also take a look at the code for the demo functions inside the *\_\_init\_\_.py* file for more ideas. Check out the rest of this documentation for advanced tips. Good luck!
+The `fractalartmaker` module comes with a `fam.square` and `fam.triangle` drawing functions that you can play with. They will accept a `colors` keyword argument such as `colors=(('black', 'white'), ('black', 'gray'))`. Also take a look at the code for the demo functions inside the *\_\_init\_\_.py* file for more ideas. Check out the rest of this documentation for advanced tips. Good luck!
 
 NOTE: Calling `fam.draw_fractal()` automatically calls `turtle.reset()` to clear the window and move the turtle cursor back to 0, 0. If you don't want this behavior, pass `reset=False` to `fam.draw_fractal()`
 
 NOTE: To free you from having to import the `turtle` module yourself, you can call most `turtle` functions from the `fam` module: `fam.reset()`, `fam.update()`, and so on.
+
 
 Gallery of Demo Fractals
 =================
@@ -234,7 +237,7 @@ All shape-drawing functions are passed a `size` argument. We can make the white-
 
 <img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/alternating-white-gray-squares.webp" style="max-width: 50%">
 
-
+If your drawing function doesn't have a `depth` parameter, then `draw_function()` won't pass one to it.
 
 You can also pass any custom keyword argument to `draw_fractal()`, and it will be forwarded to the drawing function. For example, I set up `square_random_fill()` draw function with a `custom_fill_colors` parameter. If you pass `custom_fill_colors=['blue', 'red', 'yellow', 'black', 'white']` to `draw_fractal()`, this list will be forwarded to the draw function. Note that if you pass a custom argument like `custom_fill_colors` to `draw_fractal()`, the drawing function must have a parameter named `custom_fill_colors`.
     
