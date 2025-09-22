@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "FractalArtMaker"
 # version is still read dynamically from src/fractalartmaker/__init__.py
-dynamic = ["version", "readme"]
+dynamic = ["version"]
 description = "A module for creating fractal art in Python's turtle module."
 readme = "README.md"
 authors = [
