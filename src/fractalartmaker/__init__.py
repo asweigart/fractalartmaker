@@ -1,8 +1,8 @@
 import turtle, math, random, functools, copy
-from turtle import forward, backward, left, right, position, heading, goto, setx, sety, towards, setheading, penup, pendown, pensize, width, pencolor, fillcolor, begin_fill, end_fill, home, clear, reset, hideturtle, showturtle, bgcolor, tracer, exitonclick, done, fd, bk, lt, rt, pos, pd, pu, update
+from turtle import forward, backward, left, right, position, heading, goto, setx, sety, towards, setheading, penup, pendown, pensize, width, pencolor, fillcolor, begin_fill, end_fill, home, clear, reset, hideturtle, showturtle, bgcolor, tracer, exitonclick, done, fd, bk, lt, rt, pos, pd, pu, update, speed, bye
 
-__version__ = '0.3.0'
-__all__ = ['draw_fractal', 'square', 'triangle', 'demo_four_corners', 'demo_spiral_squares', 'demo_double_spiral_squares', 'demo_triangle_spiral', 'demo_glider', 'demo_sierpinski_triangle', 'demo_wave', 'demo_horn', 'demo_snowflake', 'forward', 'backward', 'left', 'right', 'position', 'heading', 'goto', 'setx', 'sety', 'towards', 'setheading', 'penup', 'pendown', 'pensize', 'width', 'pencolor', 'fillcolor', 'begin_fill', 'end_fill', 'home', 'clear', 'reset', 'hideturtle', 'showturtle', 'bgcolor', 'tracer', 'exitonclick', 'done', 'fd', 'bk', 'lt', 'rt', 'pos', 'pd', 'pu', 'update']
+__version__ = '0.3.1'
+__all__ = ['draw_fractal', 'square', 'triangle', 'demo_four_corners', 'demo_spiral_squares', 'demo_double_spiral_squares', 'demo_triangle_spiral', 'demo_glider', 'demo_sierpinski_triangle', 'demo_wave', 'demo_horn', 'demo_snowflake', 'forward', 'backward', 'left', 'right', 'position', 'heading', 'goto', 'setx', 'sety', 'towards', 'setheading', 'penup', 'pendown', 'pensize', 'width', 'pencolor', 'fillcolor', 'begin_fill', 'end_fill', 'home', 'clear', 'reset', 'hideturtle', 'showturtle', 'bgcolor', 'tracer', 'exitonclick', 'done', 'fd', 'bk', 'lt', 'rt', 'pos', 'pd', 'pu', 'update', 'speed', 'bye']
 
 turtle.tracer(50000, 0) # Increase the first argument to speed up the drawing.
 turtle.hideturtle()

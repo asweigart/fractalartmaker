@@ -39,7 +39,7 @@ To make a fractal, call `fam.draw_fractal()` and pass it this drawing function, 
 
     fam.draw_fractal(my_square_drawing_function, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}])
 
-![Screenshot of fractal](my_square1.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/my_square1.webp" style="max-width: 50%">
 
 This draws a fractal similar to the `fam.demo_horn()` fractal. The `100` is the initial size for the first square to draw. The list of recursion specification dictionaries `[{'size': 0.96, 'y': 0.5, 'angle': 11}]` has one dictionary in it. This means for each shape drawn with the drawing function, we will draw one more recursive shape. The new square is drawn at 96% the original size (because the `'size'` key is `0.96`), located 50% of the size above the square (because the `'y'` key is `0.5`), after rotating it counterclockwise by 11 degrees (because the `'angle'` is set to `11`).
 
@@ -47,7 +47,8 @@ By default, `fam.draw_fractal()` only goes 8 recursive levels deep. You can chan
 
     fam.draw_fractal(my_square_drawing_function, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=50)
 
-![Screenshot of fractal](my_square2.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/my_square2.webp" style="max-width: 50%">
+
 
 Let's make each square draw *two* squares by putting a *second* recursion specification dictionary in the list. Because each square will draw two squares (and both of those two squares will draw two squares each, and so on and so on), be sure to set `max_depth` to something small like it's default `8`. Otherwise, the exponentially large amount of drawing will slow your program down to a crawl.
 
@@ -55,7 +56,10 @@ Let's make the second recursion specification dictionary the same as the first, 
 
     fam.draw_fractal(my_square_drawing_function, 100, [{'size': 0.96, 'y': 0.5, 'angle': 11}, {'size': 0.96, 'y': 0.5, 'angle': -11}], max_depth=8)
 
-![Screenshot of fractal](my_square3.webp)
+
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/my_square3.webp" style="max-width: 50%">
+
+
 
 As you can see, it doesn't take much to fill up the window with too many shapes. The key to making aesthetically pleasing fractals is to take a light touch and spend a lot of time experimenting. For example, we could pass a list of three recursion specification dictionaries to draw squares in three of the corners of the parent square:
 
@@ -64,7 +68,7 @@ As you can see, it doesn't take much to fill up the window with too many shapes.
          {'size': 0.5, 'x': 0.5, 'y': 0.5},
          {'size': 0.5, 'x': -0.5, 'y': -0.5}], max_depth=4)
 
-![Screenshot of fractal](my_square4.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/my_square4.webp" style="max-width: 50%">
 
 If we increase the max depth to `10`, we can see a new pattern emerge:
 
@@ -73,7 +77,7 @@ If we increase the max depth to `10`, we can see a new pattern emerge:
          {'size': 0.5, 'x': 0.5, 'y': 0.5},
          {'size': 0.5, 'x': -0.5, 'y': -0.5}], max_depth=10)
 
-![Screenshot of fractal](my_square5.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/my_square5.webp" style="max-width: 50%">
 
 The `fractalartmaker` module comes with a `fam.square` and `fam.triangle` drawing functions that you can play with. Also take a look at the code for the demo functions inside the *\_\_init\_\_.py* file for more ideas. Check out the rest of this documentation for advanced tips. Good luck!
 
@@ -94,7 +98,7 @@ Gallery of Demo Fractals
              {'size': 0.5, 'x': -0.5, 'y': -0.5},
              {'size': 0.5, 'x': 0.5, 'y': -0.5}], max_depth=max_depth, **kwargs)
 
-![Screenshot of Four Corners fractal](four-corners.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/four-corners.webp" style="max-width: 50%">
 
     def demo_spiral_squares(size=600, max_depth=50, **kwargs):
         # Spiral Squares:
@@ -103,7 +107,8 @@ Gallery of Demo Fractals
         draw_fractal(square, size, [{'size': 0.95,
             'angle': 7}], max_depth=max_depth, **kwargs)
 
-![Screenshot of Spiral Squares fractal](spiral-squares.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/spiral-squares.webp" style="max-width: 50%">
+
 
     def demo_double_spiral_squares(size=600, **kwargs):
         # Double Spiral Squares:
@@ -113,14 +118,16 @@ Gallery of Demo Fractals
             [{'size': 0.8, 'y': 0.1, 'angle': -10},
              {'size': 0.8, 'y': -0.1, 'angle': 10}], **kwargs)
 
-![Screenshot of Double Spiral Squares fractal](double-spiral-squares.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/double-spiral-squares.webp" style="max-width: 50%">
+
 
     def demo_triangle_spiral(size=20, max_depth=80, **kwargs):
         # Triangle Spiral:
         draw_fractal(triangle, size,
             [{'size': 1.05, 'angle': 7}], max_depth=max_depth, **kwargs)
 
-![Screenshot of Triangle Spiral fractal](triangle-spiral.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/triangle-spiral.webp" style="max-width: 50%">
+
 
     def demo_glider(size=600, **kwargs):
         # Conway's Game of Life Glider:
@@ -134,7 +141,8 @@ Gallery of Demo Fractals
              {'size': third, 'y': -third},
              {'size': third, 'x': -third, 'y': -third}], **kwargs)
 
-![Screenshot of Conway Glider fractal](glider.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/glider.webp" style="max-width: 50%">
+
 
     def demo_sierpinski_triangle(size=600, **kwargs):
         # Sierpinski Triangle:
@@ -144,7 +152,10 @@ Gallery of Demo Fractals
              {'size': 0.5, 'y': toMid, 'angle': 120},
              {'size': 0.5, 'y': toMid, 'angle': 240}], **kwargs)
 
-![Screenshot of Sierpinski Triangle fractal](sierpinski-triangle.webp)
+
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/sierpinski-triangle.webp" style="max-width: 50%">
+
+
 
     def demo_wave(size=280, **kwargs):
         # Wave:
@@ -153,7 +164,10 @@ Gallery of Demo Fractals
              {'size': 0.3, 'x': 0.5, 'y': 0.5},
              {'size': 0.5, 'y': -0.7, 'angle': 15}], **kwargs)
 
-![Screenshot of Wave fractal](wave.webp)
+
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/wave.webp" style="max-width: 50%">
+
+
 
     def demo_horn(size=100, max_depth=100, **kwargs):
         # Horn:
@@ -162,7 +176,9 @@ Gallery of Demo Fractals
         draw_fractal(square, size,
             [{'size': 0.96, 'y': 0.5, 'angle': 11}], max_depth=max_depth, **kwargs)
 
-![Screenshot of Horn fractal](horn.webp)
+
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/horn.webp" style="max-width: 50%">
+
 
     def demo_snowflake(size=200, **kwargs):
         # Snowflake:
@@ -180,7 +196,8 @@ Gallery of Demo Fractals
              {'x': math.cos(288 * math.pi / 180),
               'y': math.sin(288 * math.pi / 180), 'size': 0.4}], **kwargs)
 
-![Screenshot of Snowflake fractal](snowflake.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/snowflake.webp" style="max-width: 50%">
+
 
 
 Advanced Features of FAM's Shape-Drawing Functions
@@ -214,7 +231,10 @@ All shape-drawing functions are passed a `size` argument. We can make the white-
         [{'size': 0.5, 'x': -0.5, 'y': 0.5},
         {'size': 0.5, 'x': 0.5, 'y': 0.5},], max_depth=5)
 
-![Screenshot of fractal](alternating-white-gray-squares.webp)
+
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/alternating-white-gray-squares.webp" style="max-width: 50%">
+
+
 
 You can also pass any custom keyword argument to `draw_fractal()`, and it will be forwarded to the drawing function. For example, I set up `square_random_fill()` draw function with a `custom_fill_colors` parameter. If you pass `custom_fill_colors=['blue', 'red', 'yellow', 'black', 'white']` to `draw_fractal()`, this list will be forwarded to the draw function. Note that if you pass a custom argument like `custom_fill_colors` to `draw_fractal()`, the drawing function must have a parameter named `custom_fill_colors`.
     
@@ -243,7 +263,8 @@ You can also pass any custom keyword argument to `draw_fractal()`, and it will b
         [{'size': 0.5, 'x': -0.5, 'y': 0.5},
         {'size': 0.5, 'x': 0.5, 'y': 0.5},], max_depth=5, custom_fill_colors=['blue', 'red', 'yellow', 'black', 'white'])
 
-![Screenshot of fractal](random-fill-squares.webp)
+<img src="https://raw.githubusercontent.com/asweigart/fractalartmaker/main/random-fill-squares.webp" style="max-width: 50%">
+
 
 
 
